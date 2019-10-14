@@ -48,7 +48,7 @@ public class MyResource {
 	HashMap<String, Employee> employee = new HashMap<String, Employee>();
 	HashMap<String, Employee> employeeT = new HashMap<String, Employee>();
 	ArrayList<ArrayList<Employee>> arrOfArrEmployee = new ArrayList<ArrayList<Employee>>();
-	public static final int STEP_TURN = 15;
+	public static final int STEP_TURN = 20;
 	public static String username;
 	public static String password;
 
