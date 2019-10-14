@@ -75,7 +75,7 @@ public class MyResource {
 				Statement stmt = null;
 				try {
 					con = DBUtil.getConnection();
-					LocalDateTime checkIn = Instant.now().atZone(ZoneId.of("America/Chicago")).toLocalDateTime();
+					LocalDateTime checkIn = Instant.now().atZone(ZoneId.of("US/Central")).toLocalDateTime();
 					String formattedDate = dtfL.format(checkIn);
 					stmt = con.createStatement();
 					ResultSet rs = stmt.executeQuery("SELECT vl from dataturn where datet=\'" + formattedDate + "\'");
@@ -132,7 +132,7 @@ public class MyResource {
 				Statement stmt = null;
 				try {
 					con = DBUtil.getConnection();
-					LocalDateTime checkIn = Instant.now().atZone(ZoneId.of("America/Chicago")).toLocalDateTime();
+					LocalDateTime checkIn = Instant.now().atZone(ZoneId.of("US/Central")).toLocalDateTime();
 					String formattedDate = dtfL.format(checkIn);
 					stmt = con.createStatement();
 					ResultSet rs = stmt.executeQuery("SELECT vl from dataturn where datet=\'" + formattedDate + "\'");
@@ -210,7 +210,7 @@ public class MyResource {
 				Statement stmt = null;
 				try {
 					con = DBUtil.getConnection();
-					LocalDateTime checkIn = Instant.now().atZone(ZoneId.of("America/Chicago")).toLocalDateTime();
+					LocalDateTime checkIn = Instant.now().atZone(ZoneId.of("US/Central")).toLocalDateTime();
 					String formattedDate = dtfL.format(checkIn);
 					stmt = con.createStatement();
 					ResultSet rs = stmt.executeQuery("SELECT vl from dataturn where datet=\'" + formattedDate + "\'");
@@ -277,7 +277,7 @@ public class MyResource {
 		}
 		index++;
 		employee1.getTurnListD().add(new WorkHis(name, money, "1".equals(free) ? true : false, Integer.toString(index),
-				dtf.format(Instant.now().atZone(ZoneId.of("America/Chicago")).toLocalDateTime()), tipCash, tipCredit));
+				dtf.format(Instant.now().atZone(ZoneId.of("US/Central")).toLocalDateTime()), tipCash, tipCredit));
 		if ("0".equals(free)) {
 			employee1.setTotalTurn(employee1.getTotalTurn() + money);
 		}
@@ -441,7 +441,7 @@ public class MyResource {
 		if (checkL == 3) {
 			return "{\"error\": \"notLogin\"}";
 		}
-		LocalDateTime checkIn = Instant.now().atZone(ZoneId.of("America/Chicago")).toLocalDateTime();
+		LocalDateTime checkIn = Instant.now().atZone(ZoneId.of("US/Central")).toLocalDateTime();
 		String formattedDate = dtfL.format(checkIn);
 		Connection con = null;
 		Statement stmt = null;
@@ -700,7 +700,7 @@ public class MyResource {
 			Connection con = null;
 			Statement stmt = null;
 			try {
-				LocalDateTime checkIn = Instant.now().atZone(ZoneId.of("America/Chicago")).toLocalDateTime();
+				LocalDateTime checkIn = Instant.now().atZone(ZoneId.of("US/Central")).toLocalDateTime();
 				String formattedDate = dtfL.format(checkIn);
 				con = DBUtil.getConnection();
 				stmt = con.createStatement();
