@@ -8,12 +8,12 @@ import java.sql.SQLException;
 public class DBUtil {
 
 	private static Connection connection;
-	/*public static Connection getConnection() throws URISyntaxException, SQLException {
+	public static Connection getConnection() throws URISyntaxException, SQLException {
 		String dbUrl = System.getenv("JDBC_DATABASE_URL");
 		return DriverManager.getConnection(dbUrl);
-	}*/
+	}
 
-	public static Connection getConnection() throws URISyntaxException, SQLException {
+	/*public static Connection getConnection() throws URISyntaxException, SQLException {
 		   try {
 			Class.forName("org.postgresql.Driver");
 		} catch (ClassNotFoundException e1) {
@@ -32,9 +32,9 @@ public class DBUtil {
 
 	    String username = dbUri.getUserInfo().split(":")[0];
 	    String password = dbUri.getUserInfo().split(":")[1];
-	    String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath() + "?sslmode=require";*/
+	    String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath() + "?sslmode=require";
 		return connection;
 
 	//    return DriverManager.getConnection(dbUrl, username, password);
-	}
+	}*/
 }

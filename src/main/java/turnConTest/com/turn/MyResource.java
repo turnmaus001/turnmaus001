@@ -362,7 +362,11 @@ public class MyResource {
 		} catch (SQLException e) { // TODO Auto-generated catch
 			e.printStackTrace();
 		} finally {
-			
+			try {
+				con.close();
+				// stmt.close();
+			} catch (SQLException e) {
+			}
 		}
 	}
 	private void getSetting(Connection con) {
