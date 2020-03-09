@@ -363,9 +363,8 @@ public class MyResource {
 			e.printStackTrace();
 		} finally {
 			try {
-				con.close();
+				//con.close();
 				// stmt.close();
-			} catch (SQLException e) {
 			}
 		}
 	}
