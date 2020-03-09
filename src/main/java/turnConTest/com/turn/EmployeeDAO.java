@@ -5,10 +5,12 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.HashMap;
 
+import turnConTest.com.turn.vo.Employee;
+
 
 public class EmployeeDAO {
 	private static final HashMap<String,Employee> employee = new HashMap<String,Employee>();
-	public static  HashMap<String, Employee> addEmployee( String userName) {
+	public static  HashMap<String, Employee> addEmployee( String userName, String pass) {
         String employeeName =userName;
         int size = employee.size();
         int maxId = 0;
@@ -19,7 +21,7 @@ public class EmployeeDAO {
         String employeeID = Integer.toString(maxId + 1);
         //LocalDateTime checkIn = LocalDateTime.now();
         LocalDateTime checkIn = Instant.now().atZone(ZoneId.of("US/Central")).toLocalDateTime();
-        employee.put(employeeID, new Employee(employeeID, employeeName, checkIn));
+        employee.put(employeeID, new Employee(employeeID, employeeName, checkIn, pass));
         return employee;
    }
 	public static  HashMap<String, Employee> addEmployee( String id, Employee e) {
