@@ -353,7 +353,7 @@ public class MyResource {
 					seting.setRefresh(rs.getString("value"));
 				} else if ((name.equals("warning"))) {
 					seting.setWarning(rs.getString("value"));
-				} else if ((name.equals("salonName"))) {
+				} else if ((name.equals("salonN"))) {
 					seting.setSalonName(rs.getString("value"));
 				}
 			}
@@ -820,7 +820,7 @@ public class MyResource {
 				Employee employee1 = EmployeeDAO.getEmployee(a.getEmployee());
 				ArrayList<String> colVa = new ArrayList<String>();
 				colVa.add("status = '1'");
-				colVa.add("table = '" + a.getTable() + "'");
+				colVa.add("tables = '" + a.getTable() + "'");
 				colVa.add("employee = '" + employee1.getEmpName()+ "'");
 				updateIndate(con, colVa, "phone", a.getPhone());
 				return changeWorkFree(httpheaders, a.getEmployee(), a.getPass());
@@ -1472,7 +1472,7 @@ public class MyResource {
 				tmp.setPhone(rs.getString("phone"));
 				tmp.setService(rs.getString("service"));
 				tmp.setTime(getDiffTime(rs.getString("cometime"))); // time login => need tinh
-				tmp.setTable(rs.getString("table"));
+				tmp.setTable(rs.getString("tables"));
 				rst.add(tmp);
 				// tmp.setPoint(rs.getString("name"));
 			}
@@ -1512,7 +1512,7 @@ public class MyResource {
 					tmp.setTime(getDiffTime(rs.getString("cometime")));
 					rstWaiting.add(tmp);
 				} else if("1".equals(status)) {
-					tmp.setTable(rs.getString("table"));
+					tmp.setTable(rs.getString("tables"));
 					rstIn.add(tmp);
 				} else {
 					if("1".equals(rs.getString("reward")))
@@ -1573,7 +1573,7 @@ public class MyResource {
 					CustomerOSer serTmp = new CustomerOSer();
 					serTmp.setEmployee(rs.getString("employee"));
 					serTmp.setName(rs.getString("name"));
-					serTmp.setTable(rs.getString("table"));
+					serTmp.setTable(rs.getString("tables"));
 					serTmp.setTime(getDiffTime(rs.getString("cometime")));
 					rstIn.add(serTmp);
 				}
