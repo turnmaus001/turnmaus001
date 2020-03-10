@@ -729,6 +729,8 @@ public class MyResource {
 		String setValue = covertArrToString(colunmVa, " and ", true);
 		try {
 			stmt = con.createStatement();
+			System.out.println("UPDATE indatelogin SET " + setValue + " where " + whereColumn + "'"
+					+ whereValue + "'");
 			stmt.executeUpdate("UPDATE indatelogin SET " + setValue + " where " + whereColumn + " = '"
 					+ whereValue + "'");
 			return true;
