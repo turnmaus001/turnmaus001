@@ -402,7 +402,7 @@ public class MyResource {
 					seting.setRefresh(rs.getString("value"));
 				} else if ((name.equals("warning"))) {
 					seting.setWarning(rs.getString("value"));
-				} else if ((name.equals("salonName"))) {
+				} else if ((name.equals("salonN"))) {
 					seting.setSalonName(rs.getString("value"));
 				}
 			}
@@ -729,9 +729,7 @@ public class MyResource {
 		String setValue = covertArrToString(colunmVa, " , ", true);
 		try {
 			stmt = con.createStatement();
-			System.out.println("UPDATE indatelogin SET " + setValue + " where " + whereColumn + "'"
-					+ whereValue + "'");
-			stmt.executeUpdate("UPDATE indatelogin SET " + setValue + " where " + whereColumn + " = '"
+			stmt.executeUpdate("UPDATE indatelogin SET " + setValue + " where " + whereColumn + "'"
 					+ whereValue + "'");
 			return true;
 		} catch (SQLException e) { // TODO Auto-generated catch
@@ -1550,7 +1548,7 @@ public class MyResource {
 			if(seting.getWarning() == null) {
 				getSetting(con);
 			}
-			rs = stmt.executeQuery("SELECT * from indatelogin where status in ('1' , '2') order by appointment desc, id asc ");
+			rs = stmt.executeQuery("SELECT * from indatelogin where status in ('0', '1') order by appointment desc, id asc ");
 			String status = "";
 			while (rs.next()) {
 				status = rs.getString("status");
@@ -1582,6 +1580,8 @@ public class MyResource {
 			}
 			svTV.setSalonName(seting.getSalonName());
 			svTV.setRefresh(seting.getRefresh());
+			svTV.setService(rstIn);
+			svTV.setWaiting(rstWaiting);
 			return svTV;
 		} catch (SQLException e) { // TODO Auto-generated catch
 			e.printStackTrace();
