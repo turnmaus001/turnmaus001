@@ -752,7 +752,7 @@ public class MyResource {
 	public boolean updateCus(Connection con, ArrayList<String> colunmVa, String whereColumn, String whereValue) {
 		Statement stmt = null;
 		ResultSet rs = null;
-		String setValue = covertArrToString(colunmVa, " and ", true);
+		String setValue = covertArrToString(colunmVa, " , ", true);
 		try {
 			stmt = con.createStatement();
 			stmt.executeUpdate("UPDATE customer SET " + setValue + " where " + whereColumn + "'"
