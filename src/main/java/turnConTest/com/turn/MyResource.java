@@ -1550,7 +1550,7 @@ public class MyResource {
 			if(seting.getWarning() == null) {
 				getSetting(con);
 			}
-			rs = stmt.executeQuery("SELECT * from indatelogin where status in ('1' or '2') order by appointment desc, id asc ");
+			rs = stmt.executeQuery("SELECT * from indatelogin where status in ('1' , '2') order by appointment desc, id asc ");
 			String status = "";
 			while (rs.next()) {
 				status = rs.getString("status");
