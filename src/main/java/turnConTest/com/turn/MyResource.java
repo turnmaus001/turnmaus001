@@ -729,7 +729,7 @@ public class MyResource {
 		String setValue = covertArrToString(colunmVa, " , ", true);
 		try {
 			stmt = con.createStatement();
-			stmt.executeUpdate("UPDATE indatelogin SET " + setValue + " where " + whereColumn + "'"
+			stmt.executeUpdate("UPDATE indatelogin SET " + setValue + " where " + whereColumn + " = '"
 					+ whereValue + "'");
 			return true;
 		} catch (SQLException e) { // TODO Auto-generated catch
@@ -753,7 +753,7 @@ public class MyResource {
 		String setValue = covertArrToString(colunmVa, " , ", true);
 		try {
 			stmt = con.createStatement();
-			stmt.executeUpdate("UPDATE customer SET " + setValue + " where " + whereColumn + "'"
+			stmt.executeUpdate("UPDATE customer SET " + setValue + " where " + whereColumn + " = '"
 					+ whereValue + "'");
 			return true;
 		} catch (SQLException e) { // TODO Auto-generated catch
