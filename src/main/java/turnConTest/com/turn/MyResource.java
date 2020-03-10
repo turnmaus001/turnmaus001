@@ -729,10 +729,8 @@ public class MyResource {
 		String setValue = covertArrToString(colunmVa, " and ", true);
 		try {
 			stmt = con.createStatement();
-			System.out.println("UPDATE indatelogin SET " + setValue + " where " + whereColumn + " = '"
-					+ whereValue + "' order by id desc limit 1");
 			stmt.executeUpdate("UPDATE indatelogin SET " + setValue + " where " + whereColumn + " = '"
-					+ whereValue + "' order by id desc limit 1");
+					+ whereValue + "'");
 			return true;
 		} catch (SQLException e) { // TODO Auto-generated catch
 			e.printStackTrace();
