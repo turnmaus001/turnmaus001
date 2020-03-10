@@ -726,7 +726,7 @@ public class MyResource {
 	public boolean updateIndate(Connection con, ArrayList<String> colunmVa, String whereColumn, String whereValue) {
 		Statement stmt = null;
 		ResultSet rs = null;
-		String setValue = covertArrToString(colunmVa, " and ", true);
+		String setValue = covertArrToString(colunmVa, " , ", true);
 		try {
 			stmt = con.createStatement();
 			System.out.println("UPDATE indatelogin SET " + setValue + " where " + whereColumn + "'"
