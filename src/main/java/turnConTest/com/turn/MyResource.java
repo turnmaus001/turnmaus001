@@ -729,7 +729,7 @@ public class MyResource {
 		String setValue = covertArrToString(colunmVa, " and ", true);
 		try {
 			stmt = con.createStatement();
-			stmt.executeUpdate("UPDATE indatelogin SET " + setValue + " where " + whereColumn + "'"
+			stmt.executeUpdate("UPDATE indatelogin SET " + setValue + " where " + whereColumn + " = '"
 					+ whereValue + "' order by id desc limit 1");
 			return true;
 		} catch (SQLException e) { // TODO Auto-generated catch

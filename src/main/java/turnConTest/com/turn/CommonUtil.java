@@ -24,7 +24,7 @@ public class CommonUtil {
 		Long prePoint = 0L;
 		for (Long rwPoint : cvPoint) {
 			if((point < rwPoint) && !fagNext) {
-				result = "You have " + point + ". Earn " + (rwPoint - point) + " point more to get redeem!";
+				result = "You have " + point + " point. Earn " + (rwPoint - point) + " point more to get redeem!";
 				break;
 			} else if((point == rwPoint) && !fagNext) {
 				result = "You have " + point + " point. Please choose reward for it!";
