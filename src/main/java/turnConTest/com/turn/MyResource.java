@@ -490,7 +490,7 @@ public class MyResource {
 					if (Integer.parseInt(emp) > maxId)
 						maxId = Integer.parseInt(emp);
 				}
-				addGroupSub(Integer.toString(maxId), "Comming late", Double.valueOf(diff), "0", "1", pass, "1",null, null);
+				addGroupSub( Integer.toString(maxId), "Comming late", Double.valueOf(diff), "0", "1", pass, "1",null, null, null);
 			}
 
 			return buildJson(updatePosition(new ArrayList<Employee>(employee.values())), checkL, false);
@@ -764,16 +764,16 @@ public class MyResource {
 		Connection con = null;
 		try {
 			con = DBUtil.getConnection();
-			HashMap<String, String> status = getStatusandCompleMoneyPhone(con, phone);
+			DateLogin2 status = getStatusandCompleMoneyPhone(con, phone);
 			//String key = ""
-			if(status.containsKey("2")) {
+			if("2".equals(status.getStatus())) {
 				return CommonUtil.makeNGStatus("Customer complete sevice!");
-			} else if(status.containsKey("1")) {
+			} if("1".equals(status.getStatus())) {
 				return CommonUtil.makeNGStatus("Customer in in-service list!");
 			}
 			ArrayList<String> colVa = new ArrayList<String>();
 			colVa.add("point = point + " + CommonUtil.covertMoneyToPoint(Long.parseLong(seting.getCovert()),
-					CommonUtil.parseCompleteMoney(status.get("0")), seting.getCovertType()) );
+					CommonUtil.parseCompleteMoney(status.getCompletedmoney()), seting.getCovertType()) );
 			boolean flag = updateCus(con, colVa, "phone", phone);
 			ArrayList<String> colVa2 = new ArrayList<String>();
 			colVa2.add("status = '3'");
