@@ -47,6 +47,7 @@ import turnConTest.com.turn.vo.CustomerIn2;
 import turnConTest.com.turn.vo.CustomerOSer;
 import turnConTest.com.turn.vo.CustomerOWait;
 import turnConTest.com.turn.vo.CustomerOut;
+import turnConTest.com.turn.vo.DateLogin2;
 import turnConTest.com.turn.vo.DateLoginIn;
 import turnConTest.com.turn.vo.Employee;
 import turnConTest.com.turn.vo.ServiceIn;
@@ -55,6 +56,7 @@ import turnConTest.com.turn.vo.ServiceListTV;
 import turnConTest.com.turn.vo.ServiceOut;
 import turnConTest.com.turn.vo.ServiceTmp;
 import turnConTest.com.turn.vo.Setting;
+import turnConTest.com.turn.vo.SeveiceItem;
 import turnConTest.com.turn.vo.TableConvert;
 import turnConTest.com.turn.vo.WorkHis;
 
@@ -75,6 +77,10 @@ public class MyResource {
 	public static final boolean loginCheck = false;
 
 	DateTimeFormatter dtfL = DateTimeFormatter.ofPattern("yy:MM:dd");
+	public static final String SLIP_CHR = "$$$";
+	public static final String SLIP_CHR_RV = "\\$\\$\\$";
+	public static final String SLIP_CHR2 = "****";
+	public static final String SLIP_CHR2_RV = "\\*\\*\\*\\*";
 
 	/**
 	 * Method handling HTTP GET requests. The returned object will be sent to the
@@ -496,20 +502,21 @@ public class MyResource {
 
 	// http://localhost:8080/com.turn/api/addGroup/{name}/{money}/{free}
 	@GET
-	@Path("/addGroup/{id}/{name}/{money}/{free}/{over}/{pass}/{more}/{phone}")
+	@Path("/addGroup/{id}/{name}/{money}/{free}/{over}/{pass}/{more}/{phone}/{seviceid}")
 	@Produces({ MediaType.APPLICATION_JSON })
 	public String addGroup(@Context HttpHeaders httpheaders, @PathParam("id") String id, @PathParam("name") String name,
 			@PathParam("money") double money, @PathParam("free") String free, @PathParam("over") String over,
-			@PathParam("pass") String pass, @PathParam("more") String more, @PathParam("phone") String phone) {
+			@PathParam("pass") String pass, @PathParam("more") String more, @PathParam("phone") String phone,
+			@PathParam("seviceid") String seviceId) {
 		if(loginCheck) {
 			 String aunt = checkAuth(httpheaders); 
 			 if(aunt != null) return aunt;
 		}
-		return addGroupSub(id, name, money, free, over, pass, "0", more, phone);
+		return addGroupSub(id, name, money, free, over, pass, "0", more, phone, seviceId);
 	}
 
 	private String addGroupSub(String id, String name, double money, String free, String over, String pass,
-			String overTime, String more,  String phone) {
+			String overTime, String more,  String phone, String seviceId) {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
 		Employee employee1 = EmployeeDAO.getEmployee(id);
 		if (seting.getPass() == null)
@@ -552,15 +559,19 @@ public class MyResource {
 		if(more != null) {
 			ArrayList<String> colVa = new ArrayList<String>();
 			ArrayList<String> colVaCus = new ArrayList<String>();
-			Connection con;
+			Connection con = null;
 			try {
 				con = DBUtil.getConnection();
 				
-				if("YES".equals(more)) {
+				if("1".equals(more)) {
+					colVa.add("completedid = completedid || '" + SLIP_CHR + seviceId + "'");
+					colVa.add("completedmoney = completedmoney || '" + SLIP_CHR + money + "'" );
 					colVa.add("status = '0'");
+					colVa.add("cometime = '" + getTime() + "'");
 				} else {
 					colVa.add("status = '2'");
-					colVaCus.add("point = point + " + getIndateByPhone(con, "point", phone) );
+					colVaCus.add("point = point + " + CommonUtil.covertMoneyToPoint(Long.parseLong(seting.getCovert()),
+							Long.parseLong(getIndateByPhone(con, "money", phone)), seting.getCovertType()));
 					updateCus(con, colVaCus, "phone", phone);
 				}
 				updateIndate(con, colVa, "phone", phone);
@@ -571,6 +582,14 @@ public class MyResource {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} finally {
+				if(con !=null)
+					try {
+						con.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 			}
 		}
 		
@@ -690,6 +709,96 @@ public class MyResource {
 		}
 	}
 
+	@GET
+	@Path("/rewardAdd/{phone}/{number_reward}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Object rewardAdd(@Context HttpHeaders httpheaders, @PathParam("phone") String phone,
+			 @PathParam("number_reward") String number_reward) {
+		if(loginCheck) {
+			 String aunt = checkAuth(httpheaders); 
+			 if(aunt != null) return aunt;
+		}
+		CommonInfo cmIn = new CommonInfo();
+		Connection con = null;
+		try {
+			con = DBUtil.getConnection();
+			String status = getIndateByPhone(con, "status", phone);
+			if("0".equals(status)) {
+				return CommonUtil.makeNGStatus("Customer in waiting list, please confirm or delete customer from Waitting List tab!");
+			} else if("1".equals(status)) {
+				return CommonUtil.makeNGStatus("Customer in in-service list, please confirm or delete customer from In Service tab!");
+			}
+			ArrayList<String> colVa = new ArrayList<String>();
+			colVa.add("point = point - " + Integer.parseInt(number_reward));
+			boolean flag = updateCus(con, colVa, "phone", phone);
+			if (flag) {
+				cmIn.setStatus("OK");
+			}
+			return cmIn;
+
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			return cmIn;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			return cmIn;
+		} finally {
+			try {
+				if (con != null)
+					con.close();
+			} catch (SQLException e) {
+				return cmIn;
+			}
+		}
+	}
+	
+	@GET
+	@Path("/waitingDel/{phone}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Object waitingDel(@Context HttpHeaders httpheaders, @PathParam("phone") String phone) {
+		if(loginCheck) {
+			 String aunt = checkAuth(httpheaders); 
+			 if(aunt != null) return aunt;
+		}
+		CommonInfo cmIn = new CommonInfo();
+		Connection con = null;
+		try {
+			con = DBUtil.getConnection();
+			HashMap<String, String> status = getStatusandCompleMoneyPhone(con, phone);
+			//String key = ""
+			if(status.containsKey("2")) {
+				return CommonUtil.makeNGStatus("Customer complete sevice!");
+			} else if(status.containsKey("1")) {
+				return CommonUtil.makeNGStatus("Customer in in-service list!");
+			}
+			ArrayList<String> colVa = new ArrayList<String>();
+			colVa.add("point = point + " + CommonUtil.covertMoneyToPoint(Long.parseLong(seting.getCovert()),
+					CommonUtil.parseCompleteMoney(status.get("0")), seting.getCovertType()) );
+			boolean flag = updateCus(con, colVa, "phone", phone);
+			ArrayList<String> colVa2 = new ArrayList<String>();
+			colVa2.add("status = '3'");
+			updateIndate(con, colVa2, "phone",phone);
+			if (flag) {
+				cmIn.setStatus("OK");
+			}
+			return cmIn;
+
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			return cmIn;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			return cmIn;
+		} finally {
+			try {
+				if (con != null)
+					con.close();
+			} catch (SQLException e) {
+				return cmIn;
+			}
+		}
+	}
+	
 	@GET
 	@Path("/getWorkingInfo/{employee_name}")
 	@Produces({ MediaType.APPLICATION_JSON })
@@ -823,7 +932,7 @@ public class MyResource {
 				colVa.add("tables = '" + a.getTable() + "'");
 				colVa.add("employee = '" + employee1.getEmpName()+ "'");
 				updateIndate(con, colVa, "phone", a.getPhone());
-				return changeWorkFree(httpheaders, a.getEmployee(), a.getPass());
+				return subChangeWorkFree(httpheaders, a.getEmployee(), a.getPass());
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -837,6 +946,10 @@ public class MyResource {
 	public String changeWorkFree(@Context HttpHeaders httpheaders, @PathParam("id") String id,
 			@PathParam("pass") String pass) {
 		
+		return subChangeWorkFree(httpheaders, id, pass);
+	}
+
+	private String subChangeWorkFree(HttpHeaders httpheaders, String id, String pass) {
 		if(loginCheck) {
 			 String aunt = checkAuth(httpheaders); 
 			 if(aunt != null) return aunt;
@@ -1425,6 +1538,33 @@ public class MyResource {
 		return null;
 	}
 	
+	public DateLogin2 getStatusandCompleMoneyPhone(Connection con, String phone) {
+		Statement stmt = null;
+		ResultSet rs = null;
+		try {
+			stmt = con.createStatement();
+			rs = stmt.executeQuery(
+					"SELECT status, completedmoney, employee from indatelogin where phone = '" + phone + "' order by id desc limit 1");
+			DateLogin2 rst = new DateLogin2();
+			if (rs.next()) {
+				rst.setCompletedmoney(rs.getString("completedmoney"));
+				rst.setStatus(rs.getString("status"));
+				rst.setEmployee(rs.getString("employee"));
+				return rst;
+			}
+		} catch (SQLException e) { // TODO Auto-generated catch
+			e.printStackTrace();
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
 	public CustomerOut getDataByEmployee(Connection con, String employee) {
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -1432,9 +1572,10 @@ public class MyResource {
 			CustomerOut out = new CustomerOut();
 			stmt = con.createStatement();
 			rs = stmt.executeQuery(
-					"SELECT service , phone, money, countsevice from indatelogin where employee = '" + employee + "' and status = '1' order by id desc limit 1");
+					"SELECT service , phone, money, countsevice,servicefull from indatelogin where employee = '" + employee + "' and status = '1' order by id desc limit 1");
 			if (rs.next()) {
 				out.setService(rs.getString("service"));
+				out.setServiceList(getSeviceListOfCus(rs.getString("servicefull")));
 				out.setPhone(rs.getString("phone"));
 				out.setMoney(rs.getString("money"));
 				if(Integer.parseInt(rs.getString("countsevice")) > 1)
@@ -1456,6 +1597,21 @@ public class MyResource {
 			}
 		}
 		return null;
+	}
+
+	private ArrayList<SeveiceItem> getSeviceListOfCus(String sevList) {
+		// TODO Auto-generated method stub
+		String[] items = sevList.split(SLIP_CHR2_RV);
+		ArrayList<SeveiceItem> rst = new ArrayList<SeveiceItem>();
+		for (String item : items) {
+			String[] data = item.split(SLIP_CHR_RV);
+			SeveiceItem tmp = new SeveiceItem();
+			tmp.setId(data[1]);
+			tmp.setName(data[2]);
+			rst.add(tmp);
+		}
+		
+		return rst;
 	}
 
 	public ArrayList<CustomerIn> getIndateByStatus(Connection con, String status, String orderBy) {
@@ -1515,8 +1671,18 @@ public class MyResource {
 					tmp.setTable(rs.getString("tables"));
 					rstIn.add(tmp);
 				} else {
-					if("1".equals(rs.getString("reward")))
+					if("1".equals(rs.getString("reward"))) {
+						if("3".equals(status)) {
+							int point = CommonUtil.covertMoneyToPoint(Long.parseLong(seting.getCovert()),
+									CommonUtil.parseCompleteMoney(rs.getString("completedmoney")), seting.getCovertType());
+							tmp.setPoint(Integer.toString(point));
+						} else {
+							int point = CommonUtil.covertMoneyToPoint(Long.parseLong(seting.getCovert()),
+									Long.parseLong(rs.getString("money")), seting.getCovertType());
+							tmp.setPoint(Integer.toString(point));
+						}
 						rstRew.add(tmp);
+					}
 				}
 			}
 			rsHm.put(0, rstWaiting);
@@ -1605,20 +1771,25 @@ public class MyResource {
 			stmt = con.createStatement();
 			// System.out.println("SELECT name from service where id in (" +
 			// covertArrToString(new ArrayList<String>(Arrays.asList(ids))) + ")");
-			rs = stmt.executeQuery("SELECT  name, money, time from service where id in  ("
+			rs = stmt.executeQuery("SELECT  id, name, money, time from service where id in  ("
 					+ covertArrToString(new ArrayList<String>(Arrays.asList(ids)), ",", true) + ")");
 
 			ArrayList<String> tmp = new ArrayList<String>();
+			ArrayList<String> tmpName = new ArrayList<String>();
 			Long money = 0L;
 			String tmpMoney = "";
+			String name = "";
 			while (rs.next()) {
 				// sTmp = new ServiceTmp();
-				tmp.add(rs.getString("name"));
+				name = rs.getString("name");
+				tmpName.add(name);
+				tmp.add(name + SLIP_CHR + rs.getString("id"));
 				tmpMoney = rs.getString("money");
 				money += Long.parseLong(tmpMoney.substring(0, tmpMoney.length() - 1));
 			}
-			lstResult.setName(tmp);
+			lstResult.setName(tmpName);
 			lstResult.setMoney(money);
+			lstResult.setSevice(tmp);
 		} catch (SQLException e) { // TODO Auto-generated catch
 			e.printStackTrace();
 		} finally {
@@ -1710,12 +1881,13 @@ public class MyResource {
 			} else if ("1".equals(status)) {
 				return CommonUtil.makeNGStatus("You are in in severice!");
 			}
-			sql = "INSERT INTO indatelogin (phone, name , status , service , appointment, reward, money, countsevice, serviceid, cometime ) VALUES ('"
+			sql = "INSERT INTO indatelogin (phone, name , status , service , appointment, reward, money, countsevice, serviceid, cometime,"
+					+ " servicefull, completedmoney ) VALUES ('"
 					+ a.getPhone() + "','" + cus.getName() + "','0','"
-					+ covertArrToString(serviceName.getName(), "\r\n", false) + "','" + a.getAppointment() + "','" + 0
+					+ covertArrToString(serviceName.getName(), SLIP_CHR, true) + "','" + a.getAppointment() + "','" + 0
 					+ "','" + serviceName.getMoney() + "','" + serviceName.getName().size() + "','"
 					+ covertArrToString(new ArrayList<String>(Arrays.asList(a.getService())), ",", true) + "','"
-					+ getTime() + "')";
+					+ getTime() + "'" + ",'" +covertArrToString(serviceName.getSevice(), SLIP_CHR2, true) + "','0')";
 			stmt.executeUpdate(sql);
 			// Insert History
 			String msg = CommonUtil
@@ -2066,6 +2238,63 @@ public class MyResource {
 		return buildJson(updatePosition(new ArrayList<Employee>(employee.values())), 1, false);
 	}
 
+	@GET
+	@Path("/seviceDel/{phone}/{waiting}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Object seviceDel(@Context HttpHeaders httpheaders, @PathParam("phone") String phone,
+			@PathParam("waiting") String waiting) {
+		if(loginCheck) {
+			 String aunt = checkAuth(httpheaders); 
+			 if(aunt != null) return aunt;
+		}
+		CommonInfo cmIn = new CommonInfo();
+		Connection con = null;
+		try {
+			con = DBUtil.getConnection();
+			DateLogin2 status = getStatusandCompleMoneyPhone(con, phone);
+			//String key = ""
+			if("2".equals(status.getStatus())) {
+				return CommonUtil.makeNGStatus("Customer complete sevice!");
+			} else if("2".equals(status.getStatus())) {
+				return CommonUtil.makeNGStatus("Customer in in-waiting list!");
+			}
+			//Re-asign
+			if("1".equals(waiting)) {
+				ArrayList<String> colVa2 = new ArrayList<String>();
+				colVa2.add("status = '0'");
+				updateIndate(con, colVa2, "phone",phone);
+			} else {
+				ArrayList<String> colVa = new ArrayList<String>();
+				colVa.add("point = point + " + CommonUtil.covertMoneyToPoint(Long.parseLong(seting.getCovert()),
+						CommonUtil.parseCompleteMoney(status.getCompletedmoney()), seting.getCovertType()) );
+				updateCus(con, colVa, "phone", phone);
+				ArrayList<String> colVa2 = new ArrayList<String>();
+				colVa2.add("status = '3'");
+				updateIndate(con, colVa2, "phone",phone);
+			}
+			
+			Employee employee1 = EmployeeDAO.getEmployeeByName(status.getEmployee());
+			employee1.setIsWorking(!employee1.isIsWorking());
+			LocalDateTime checkIn = Instant.now().atZone(ZoneId.of("US/Central")).toLocalDateTime();
+			employee1.setLstTime(checkIn);
+			employee = EmployeeDAO.addEmployee(employee1.getEmployeeID(), employee1);
+			return buildJson(updatePosition(new ArrayList<Employee>(employee.values())), 1, false);
+
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			return cmIn;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			return cmIn;
+		} finally {
+			try {
+				if (con != null)
+					con.close();
+			} catch (SQLException e) {
+				return cmIn;
+			}
+		}
+	}
 	private Object getListSv() {
 		Connection con = null;
 		Statement stmt = null;

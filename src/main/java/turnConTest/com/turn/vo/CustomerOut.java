@@ -1,11 +1,26 @@
 package turnConTest.com.turn.vo;
 
+import java.util.ArrayList;
+
 public class CustomerOut {
 
 	private String service;
 	private String phone;
 	private String money;
 	private String more;
+	private ArrayList<SeveiceItem> serviceList;
+	/**
+	 * @return the serviceList
+	 */
+	public ArrayList<SeveiceItem> getServiceList() {
+		return serviceList;
+	}
+	/**
+	 * @param serviceList the serviceList to set
+	 */
+	public void setServiceList(ArrayList<SeveiceItem> serviceList) {
+		this.serviceList = serviceList;
+	}
 	/**
 	 * @return the service
 	 */

@@ -60,4 +60,12 @@ public class CommonUtil {
 		info.setMsg(msg);
 		return info;
 	}
+	public static Long parseCompleteMoney(String com) {
+		String[] tmp = com.split("\\$\\$\\$");
+		Long rs = 0L;
+		for (String v : tmp) {
+			rs += Long.parseLong(v);
+		}
+		return rs;
+	}
 }

@@ -42,6 +42,14 @@ public class EmployeeDAO {
 		}
         return false;
    }
+	public static  Employee getEmployeeByName( String name) {
+		for (Employee employee1 : employee.values()) {
+			if(employee1.getEmpName().toLowerCase().equals(name.trim().toLowerCase())) {
+				return employee1;
+			}
+		}
+        return null;
+   }
 	public static  HashMap<String, Employee> getEmployee( ) {
         return employee;
    }
