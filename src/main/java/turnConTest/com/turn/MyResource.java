@@ -1606,8 +1606,8 @@ public class MyResource {
 		for (String item : items) {
 			String[] data = item.split(SLIP_CHR_RV);
 			SeveiceItem tmp = new SeveiceItem();
-			tmp.setId(data[1]);
-			tmp.setName(data[2]);
+			tmp.setId(data[0]);
+			tmp.setName(data[1]);
 			rst.add(tmp);
 		}
 		
