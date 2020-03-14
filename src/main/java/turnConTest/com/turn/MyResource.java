@@ -81,6 +81,8 @@ public class MyResource {
 	public static final String SLIP_CHR_RV = "\\$\\$\\$";
 	public static final String SLIP_CHR2 = "****";
 	public static final String SLIP_CHR2_RV = "\\*\\*\\*\\*";
+	public static final String SLIP_CHR3 = "++++";
+	public static final String SLIP_CHR_RV3 = "\\+\\+\\+\\+";
 
 	/**
 	 * Method handling HTTP GET requests. The returned object will be sent to the
@@ -1606,8 +1608,9 @@ public class MyResource {
 		for (String item : items) {
 			String[] data = item.split(SLIP_CHR_RV);
 			SeveiceItem tmp = new SeveiceItem();
-			tmp.setId(data[0]);
-			tmp.setName(data[1]);
+			tmp.setId(data[1]);
+			tmp.setName(data[0]);
+			tmp.setMoney(data[2]);
 			rst.add(tmp);
 		}
 		
@@ -1781,11 +1784,12 @@ public class MyResource {
 			String name = "";
 			while (rs.next()) {
 				// sTmp = new ServiceTmp();
+				tmpMoney = rs.getString("money");
+				tmpMoney = tmpMoney.substring(0, tmpMoney.length() - 1);
 				name = rs.getString("name");
 				tmpName.add(name);
-				tmp.add(name + SLIP_CHR + rs.getString("id"));
-				tmpMoney = rs.getString("money");
-				money += Long.parseLong(tmpMoney.substring(0, tmpMoney.length() - 1));
+				tmp.add(name + SLIP_CHR + rs.getString("id") + SLIP_CHR + tmpMoney);
+				money += Long.parseLong(tmpMoney);
 			}
 			lstResult.setName(tmpName);
 			lstResult.setMoney(money);

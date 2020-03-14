@@ -1,8 +1,21 @@
 package turnConTest.com.turn.vo;
 
 public class SeveiceItem {
+	/**
+	 * @return the money
+	 */
+	public String getMoney() {
+		return money;
+	}
+	/**
+	 * @param money the money to set
+	 */
+	public void setMoney(String money) {
+		this.money = money;
+	}
 	private String name;
 	private String id;
+	private String money;
 	/**
 	 * @return the name
 	 */
