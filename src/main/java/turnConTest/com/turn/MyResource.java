@@ -386,7 +386,7 @@ public class MyResource {
 			String name = "";
 			while (rs.next()) {
 				name = rs.getString("name").trim();
-				System.out.println(name);
+				//System.out.println(name);
 				if (name.equals("admin")) {
 					seting.setPass(rs.getString("value"));
 				} else if ((name.equals("role"))) {
@@ -405,7 +405,6 @@ public class MyResource {
 					seting.setWeeken(rs.getString("value"));
 				} else if ((name.equals("covert"))) {
 					seting.setCovert(rs.getString("value"));
-					System.out.println(seting.getCovert());
 				} else if ((name.equals("cvType"))) {
 					seting.setCovertType(rs.getString("value"));
 				} else if ((name.equals("refresh"))) {

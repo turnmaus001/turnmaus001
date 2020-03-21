@@ -66,7 +66,7 @@ public class CommonUtil {
 		String[] tmp = com.split("\\$\\$\\$");
 		Long rs = 0L;
 		for (String v : tmp) {
-			rs += Long.parseLong(v);
+			rs += Double.valueOf(v).longValue();
 		}
 		return rs;
 	}
