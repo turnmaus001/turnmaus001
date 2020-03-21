@@ -568,6 +568,7 @@ public class MyResource {
 				if("1".equals(more)) {
 					colVa.add("completedid = completedid || '" + SLIP_CHR + seviceId + "'");
 					colVa.add("completedmoney = completedmoney || '" + SLIP_CHR + money + "'" );
+					colVa.add("completedempolyee = completedempolyee || '" + SLIP_CHR2 + seviceId + SLIP_CHR+  employee1.getEmpName() + "'" );
 					colVa.add("status = '0'");
 					colVa.add("cometime = '" + getTime() + "'");
 				} else {
@@ -575,9 +576,20 @@ public class MyResource {
 					colVaCus.add("point = point + " + CommonUtil.covertMoneyToPoint(Long.parseLong(seting.getCovert()),
 							Long.parseLong(getIndateByPhone(con, "money", phone)), seting.getCovertType()));
 					updateCus(con, colVaCus, "phone", phone);
+				    // id$$$employee****id$$$employee
+					String completedempolyee = getIndateByPhone(con, "completedempolyee", phone);
+					String serviceid = getIndateByPhone(con, "serviceid", phone);
+					if(completedempolyee !=null && completedempolyee.isEmpty()) {
+						colVa.add("completedempolyee = completedempolyee || '" + SLIP_CHR2 + seviceId + SLIP_CHR+  employee1.getEmpName() + "'" );
+						colVa.add("completedmoney = completedmoney || '" + SLIP_CHR + money + "'" );
+						insertHis(con, phone, completedempolyee + SLIP_CHR2 + seviceId + SLIP_CHR+  employee1.getEmpName() , getTime());
+					} else {
+						colVa.add("completedempolyee = completedempolyee || '" + SLIP_CHR2 + serviceid + SLIP_CHR +  employee1.getEmpName() + "'" );
+						colVa.add("completedmoney = money " );
+						insertHis(con, phone,  SLIP_CHR2 + serviceid + SLIP_CHR+  employee1.getEmpName() , getTime());
+					}
 				}
 				updateIndate(con, colVa, "phone", phone);
-		
 			} catch (URISyntaxException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -690,6 +702,8 @@ public class MyResource {
 			ArrayList<String> colVa = new ArrayList<String>();
 			colVa.add("reward = '1'");
 			boolean flag = updateIndate(con, colVa, "phone", phone);
+			//getIndateByPhone(con, column, phone);
+			//insertrewardChoose(con, phone);
 			if (flag) {
 				cmIn.setStatus("OK");
 			}
@@ -770,16 +784,59 @@ public class MyResource {
 			//String key = ""
 			if("2".equals(status.getStatus())) {
 				return CommonUtil.makeNGStatus("Customer complete sevice!");
-			} if("1".equals(status.getStatus())) {
+			} else if("1".equals(status.getStatus())) {
 				return CommonUtil.makeNGStatus("Customer in in-service list!");
 			}
 			ArrayList<String> colVa = new ArrayList<String>();
-			colVa.add("point = point + " + CommonUtil.covertMoneyToPoint(Long.parseLong(seting.getCovert()),
-					CommonUtil.parseCompleteMoney(status.getCompletedmoney()), seting.getCovertType()) );
+			//if()
+			int point = CommonUtil.covertMoneyToPoint(Long.parseLong(seting.getCovert()),
+					CommonUtil.parseCompleteMoney(status.getCompletedmoney()), seting.getCovertType());
+			colVa.add("point = point + " +  point);
 			boolean flag = updateCus(con, colVa, "phone", phone);
-			ArrayList<String> colVa2 = new ArrayList<String>();
-			colVa2.add("status = '3'");
-			updateIndate(con, colVa2, "phone",phone);
+		//	ArrayList<String> colVa2 = new ArrayList<String>();
+		//	colVa2.add("point = '" + point +"'");
+		//	updaterewardChoose(con, colVa2, "phone",phone + "_" + getDate());
+			String completedempolyee = getIndateByPhone(con, "completedempolyee", phone);
+			if(completedempolyee !=null && completedempolyee.isEmpty()) {
+				insertHis(con, phone, completedempolyee , getTime());
+			} 
+			
+			ArrayList<String> colVa3 = new ArrayList<String>();
+			colVa3.add("status = '2'");
+			updateIndate(con, colVa3, "phone", phone);
+			
+			//deleteIndate(con, phone);
+			
+		/*	ArrayList<String> colVa = new ArrayList<String>();
+			ArrayList<String> colVaCus = new ArrayList<String>();
+			Connection con = null;
+			try {
+				con = DBUtil.getConnection();
+				
+				if("1".equals(more)) {
+					colVa.add("completedid = completedid || '" + SLIP_CHR + seviceId + "'");
+					colVa.add("completedmoney = completedmoney || '" + SLIP_CHR + money + "'" );
+					colVa.add("completedempolyee = completedempolyee || '" + SLIP_CHR2 + seviceId + SLIP_CHR+  employee1.getEmpName() + "'" );
+					colVa.add("status = '0'");
+					colVa.add("cometime = '" + getTime() + "'");
+				} else {
+					colVa.add("status = '2'");
+					colVaCus.add("point = point + " + CommonUtil.covertMoneyToPoint(Long.parseLong(seting.getCovert()),
+							Long.parseLong(getIndateByPhone(con, "money", phone)), seting.getCovertType()));
+					updateCus(con, colVaCus, "phone", phone);
+				    // id$$$employee****id$$$employee
+					String completedempolyee = getIndateByPhone(con, "completedempolyee", phone);
+					String serviceid = getIndateByPhone(con, "serviceid", phone);
+					if(completedempolyee !=null && completedempolyee.isEmpty()) {
+						colVa.add("completedempolyee = completedempolyee || '" + SLIP_CHR2 + seviceId + SLIP_CHR+  employee1.getEmpName() + "'" );
+						insertHis(con, phone, completedempolyee + SLIP_CHR2 + seviceId + SLIP_CHR+  employee1.getEmpName() , getTime());
+					} else {
+						colVa.add("completedempolyee = completedempolyee || '" + SLIP_CHR2 + serviceid + SLIP_CHR +  employee1.getEmpName() + "'" );
+						insertHis(con, phone,  SLIP_CHR2 + serviceid + SLIP_CHR+  employee1.getEmpName() , getTime());
+					}
+				}
+				updateIndate(con, colVa, "phone", phone);*/
+			
 			if (flag) {
 				cmIn.setStatus("OK");
 			}
@@ -841,7 +898,30 @@ public class MyResource {
 		try {
 			stmt = con.createStatement();
 			stmt.executeUpdate("UPDATE indatelogin SET " + setValue + " where " + whereColumn + " = '"
-					+ whereValue + "'");
+					+ whereValue + "' and status <> '2' ");
+			return true;
+		} catch (SQLException e) { // TODO Auto-generated catch
+			e.printStackTrace();
+			return false;
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+		}
+	}
+	
+	public boolean updaterewardChoose(Connection con, ArrayList<String> colunmVa, String whereColumn, String whereValue) {
+		Statement stmt = null;
+		String setValue = covertArrToString(colunmVa, " , ", true);
+		try {
+			stmt = con.createStatement();
+			stmt.executeUpdate("UPDATE rewardChoose SET " + setValue + " where " + whereColumn + " = '"
+					+ whereValue + "' and status ='1'");
 			return true;
 		} catch (SQLException e) { // TODO Auto-generated catch
 			e.printStackTrace();
@@ -858,6 +938,74 @@ public class MyResource {
 		}
 	}
 
+	public boolean deleteIndate(Connection con, String phone) {
+		Statement stmt = null;
+		try {
+			stmt = con.createStatement();
+			stmt.executeUpdate("DELETE indatelogin where phone = '"
+					+ phone + "'");
+			return true;
+		} catch (SQLException e) { // TODO Auto-generated catch
+			e.printStackTrace();
+			return false;
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+		}
+	}
+
+	//id$$$employee****id$$$employee
+	public boolean insertHis(Connection con, String phone, String completeddata, String cometime) {
+		Statement stmt = null;
+		try {
+			stmt = con.createStatement();
+			stmt.executeUpdate("insert into history (phone, completeddata, cometime) values ('"
+					+ phone + "','"
+					+ completeddata + "','"
+					+ cometime + "')");
+			return true;
+		} catch (SQLException e) { // TODO Auto-generated catch
+			e.printStackTrace();
+			return false;
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+		}
+	}
+	
+	public boolean insertrewardChoose(Connection con, String phone, String sevice, String name) {
+		Statement stmt = null;
+		try {
+			stmt = con.createStatement();
+			stmt.executeUpdate("insert into rewardChoose (phone, point, status, service, name) values ('"
+					+ phone + "_" + getDate() + "','0','0','"+ sevice + "','"+name + "')");
+			return true;
+		} catch (SQLException e) { // TODO Auto-generated catch
+			e.printStackTrace();
+			return false;
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+		}
+	}
 	public boolean updateCus(Connection con, ArrayList<String> colunmVa, String whereColumn, String whereValue) {
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -933,6 +1081,8 @@ public class MyResource {
 				colVa.add("status = '1'");
 				colVa.add("tables = '" + a.getTable() + "'");
 				colVa.add("employee = '" + employee1.getEmpName()+ "'");
+				colVa.add("cometime = '" + getTime() + "'");
+				colVa.add("cometime = '" + getTime() + "'");
 				updateIndate(con, colVa, "phone", a.getPhone());
 				return subChangeWorkFree(httpheaders, a.getEmployee(), a.getPass());
 			}
@@ -1422,6 +1572,12 @@ public class MyResource {
 		return dtfL.format(checkIn).toString();
 	}
 	
+	public String getDate() {
+		LocalDateTime checkIn = Instant.now().atZone(ZoneId.of("US/Central")).toLocalDateTime();
+		DateTimeFormatter dtfL = DateTimeFormatter.ofPattern("yyyy:MM:dd");
+		return dtfL.format(checkIn).toString();
+	}
+	
 	public String getDiffTime(String preTime) {
 		LocalDateTime curTime = Instant.now().atZone(ZoneId.of("US/Central")).toLocalDateTime();
 		DateTimeFormatter dtfL = DateTimeFormatter.ofPattern("yyyy:MM:dd HH:mm:ss");
@@ -1522,7 +1678,7 @@ public class MyResource {
 		try {
 			stmt = con.createStatement();
 			rs = stmt.executeQuery(
-					"SELECT " + column+ " from indatelogin where phone = '" + phone + "' order by id desc limit 1");
+					"SELECT " + column+ " from indatelogin where phone = '" + phone + "'  and status <> '2' order by id desc limit 1");
 			if (rs.next()) {
 				return rs.getString(column);
 			}
@@ -1546,7 +1702,7 @@ public class MyResource {
 		try {
 			stmt = con.createStatement();
 			rs = stmt.executeQuery(
-					"SELECT status, completedmoney, employee from indatelogin where phone = '" + phone + "' order by id desc limit 1");
+					"SELECT status, completedmoney, employee from indatelogin where phone = '" + phone + "' and status <> '2' order by id desc limit 1");
 			DateLogin2 rst = new DateLogin2();
 			if (rs.next()) {
 				rst.setCompletedmoney(rs.getString("completedmoney"));
@@ -1675,15 +1831,15 @@ public class MyResource {
 					rstIn.add(tmp);
 				} else {
 					if("1".equals(rs.getString("reward"))) {
-						if("3".equals(status)) {
+						if("2".equals(status)) {
 							int point = CommonUtil.covertMoneyToPoint(Long.parseLong(seting.getCovert()),
 									CommonUtil.parseCompleteMoney(rs.getString("completedmoney")), seting.getCovertType());
 							tmp.setPoint(Integer.toString(point));
-						} else {
+						}/* else {
 							int point = CommonUtil.covertMoneyToPoint(Long.parseLong(seting.getCovert()),
 									Long.parseLong(rs.getString("money")), seting.getCovertType());
 							tmp.setPoint(Integer.toString(point));
-						}
+						}*/
 						rstRew.add(tmp);
 					}
 				}
@@ -1886,13 +2042,14 @@ public class MyResource {
 				return CommonUtil.makeNGStatus("You are in in severice!");
 			}
 			sql = "INSERT INTO indatelogin (phone, name , status , service , appointment, reward, money, countsevice, serviceid, cometime,"
-					+ " servicefull, completedmoney ) VALUES ('"
+					+ " servicefull, completedmoney, completedid, completedempolyee ) VALUES ('"
 					+ a.getPhone() + "','" + cus.getName() + "','0','"
 					+ covertArrToString(serviceName.getName(), SLIP_CHR, true) + "','" + a.getAppointment() + "','" + 0
 					+ "','" + serviceName.getMoney() + "','" + serviceName.getName().size() + "','"
 					+ covertArrToString(new ArrayList<String>(Arrays.asList(a.getService())), ",", true) + "','"
-					+ getTime() + "'" + ",'" +covertArrToString(serviceName.getSevice(), SLIP_CHR2, true) + "','0')";
+					+ getTime() + "'" + ",'" +covertArrToString(serviceName.getSevice(), SLIP_CHR2, true) + "','0','','')";
 			stmt.executeUpdate(sql);
+			//insertrewardChoose(con, a.getPhone(), covertArrToString(serviceName.getName(), SLIP_CHR, true),cus.getName() );
 			// Insert History
 			String msg = CommonUtil
 					.getMsg(Integer.toUnsignedLong(CommonUtil.covertMoneyToPoint(Long.parseLong(seting.getCovert()),
@@ -2266,15 +2423,26 @@ public class MyResource {
 			if("1".equals(waiting)) {
 				ArrayList<String> colVa2 = new ArrayList<String>();
 				colVa2.add("status = '0'");
+				colVa2.add("cometime = '" +  getTime()+"'");
 				updateIndate(con, colVa2, "phone",phone);
 			} else {
 				ArrayList<String> colVa = new ArrayList<String>();
-				colVa.add("point = point + " + CommonUtil.covertMoneyToPoint(Long.parseLong(seting.getCovert()),
-						CommonUtil.parseCompleteMoney(status.getCompletedmoney()), seting.getCovertType()) );
+				int point = CommonUtil.covertMoneyToPoint(Long.parseLong(seting.getCovert()),
+						CommonUtil.parseCompleteMoney(status.getCompletedmoney()), seting.getCovertType());
+				colVa.add("point = point + " +  point);
 				updateCus(con, colVa, "phone", phone);
-				ArrayList<String> colVa2 = new ArrayList<String>();
-				colVa2.add("status = '3'");
-				updateIndate(con, colVa2, "phone",phone);
+				
+				
+				String completedempolyee = getIndateByPhone(con, "completedempolyee", phone);
+				if(completedempolyee !=null && completedempolyee.isEmpty()) {
+					insertHis(con, phone, completedempolyee , getTime());
+				} 
+				
+				ArrayList<String> colVa3 = new ArrayList<String>();
+				colVa3.add("status = '2'");
+				updateIndate(con, colVa3, "phone", phone);
+				//updaterewardChoose(con, colVa2, "phone",phone + "_" + getDate());
+				//deleteIndate(con, phone);
 			}
 			
 			Employee employee1 = EmployeeDAO.getEmployeeByName(status.getEmployee());

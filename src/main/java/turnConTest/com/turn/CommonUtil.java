@@ -61,6 +61,8 @@ public class CommonUtil {
 		return info;
 	}
 	public static Long parseCompleteMoney(String com) {
+		if(com == null || com.isEmpty())
+			return 0L;
 		String[] tmp = com.split("\\$\\$\\$");
 		Long rs = 0L;
 		for (String v : tmp) {
