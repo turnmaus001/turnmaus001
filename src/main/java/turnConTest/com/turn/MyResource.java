@@ -789,6 +789,10 @@ public class MyResource {
 			}
 			ArrayList<String> colVa = new ArrayList<String>();
 			//if()
+			System.out.println("   " + seting.getCovert() + "   ");
+			if(seting.getCovert() == null) {
+				getSetting(con);
+			}
 			int point = CommonUtil.covertMoneyToPoint(Long.parseLong(seting.getCovert()),
 					CommonUtil.parseCompleteMoney(status.getCompletedmoney()), seting.getCovertType());
 			colVa.add("point = point + " +  point);
