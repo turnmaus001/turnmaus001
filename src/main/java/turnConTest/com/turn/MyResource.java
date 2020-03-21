@@ -897,6 +897,8 @@ public class MyResource {
 		String setValue = covertArrToString(colunmVa, " , ", true);
 		try {
 			stmt = con.createStatement();
+			System.out.println("UPDATE indatelogin SET " + setValue + " where " + whereColumn + " = '"
+					+ whereValue + "' and status <> '2' ");
 			stmt.executeUpdate("UPDATE indatelogin SET " + setValue + " where " + whereColumn + " = '"
 					+ whereValue + "' and status <> '2' ");
 			return true;
@@ -1081,7 +1083,6 @@ public class MyResource {
 				colVa.add("status = '1'");
 				colVa.add("tables = '" + a.getTable() + "'");
 				colVa.add("employee = '" + employee1.getEmpName()+ "'");
-				colVa.add("cometime = '" + getTime() + "'");
 				colVa.add("cometime = '" + getTime() + "'");
 				updateIndate(con, colVa, "phone", a.getPhone());
 				return subChangeWorkFree(httpheaders, a.getEmployee(), a.getPass());
