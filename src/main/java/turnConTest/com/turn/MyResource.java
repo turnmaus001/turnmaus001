@@ -790,7 +790,7 @@ public class MyResource {
 			}
 			ArrayList<String> colVa = new ArrayList<String>();
 			//if()
-			System.out.println("   " + seting.getCovert() + "   ");
+			//System.out.println("   " + seting.getCovert() + "   ");
 			if(seting.getCovert() == null) {
 				getSetting(con);
 			}
@@ -1838,6 +1838,9 @@ public class MyResource {
 				} else {
 					if("1".equals(rs.getString("reward"))) {
 						if("2".equals(status)) {
+							if(seting.getCovert() == null) {
+								getSetting(con);
+							}
 							int point = CommonUtil.covertMoneyToPoint(Long.parseLong(seting.getCovert()),
 									CommonUtil.parseCompleteMoney(rs.getString("completedmoney")), seting.getCovertType());
 							tmp.setPoint(Integer.toString(point));
@@ -2036,7 +2039,7 @@ public class MyResource {
 
 			}
 			if (seting.getCovert() == null || seting.getCovert() == "") {
-				getSetting();
+				getSetting(con);
 			}
 			ServiceTmp serviceName = getServiceByID(con, a.getService());
 			stmt = con.createStatement();
@@ -2433,6 +2436,9 @@ public class MyResource {
 				updateIndate(con, colVa2, "phone",phone);
 			} else {
 				ArrayList<String> colVa = new ArrayList<String>();
+				if(seting.getCovert() == null) {
+					getSetting(con);
+				}
 				int point = CommonUtil.covertMoneyToPoint(Long.parseLong(seting.getCovert()),
 						CommonUtil.parseCompleteMoney(status.getCompletedmoney()), seting.getCovertType());
 				colVa.add("point = point + " +  point);
