@@ -580,7 +580,7 @@ public class MyResource {
 				    // id$$$employee****id$$$employee
 					String completedempolyee = getIndateByPhone(con, "completedempolyee", phone);
 					String serviceid = getIndateByPhone(con, "serviceid", phone);
-					if(completedempolyee !=null && completedempolyee.isEmpty()) {
+					if(completedempolyee !=null && !completedempolyee.isEmpty()) {
 						colVa.add("completedempolyee = completedempolyee || '" + SLIP_CHR2 + seviceId + SLIP_CHR+  employee1.getEmpName() + "'" );
 						colVa.add("completedmoney = completedmoney || '" + SLIP_CHR + money + "'" );
 						insertHis(con, phone, completedempolyee + SLIP_CHR2 + seviceId + SLIP_CHR+  employee1.getEmpName() , getTime());
@@ -802,7 +802,7 @@ public class MyResource {
 		//	colVa2.add("point = '" + point +"'");
 		//	updaterewardChoose(con, colVa2, "phone",phone + "_" + getDate());
 			String completedempolyee = getIndateByPhone(con, "completedempolyee", phone);
-			if(completedempolyee !=null && completedempolyee.isEmpty()) {
+			if(completedempolyee !=null && !completedempolyee.isEmpty()) {
 				insertHis(con, phone, completedempolyee , getTime());
 			} 
 			
@@ -2440,7 +2440,7 @@ public class MyResource {
 				
 				
 				String completedempolyee = getIndateByPhone(con, "completedempolyee", phone);
-				if(completedempolyee !=null && completedempolyee.isEmpty()) {
+				if(completedempolyee !=null && !completedempolyee.isEmpty()) {
 					insertHis(con, phone, completedempolyee , getTime());
 				} 
 				
