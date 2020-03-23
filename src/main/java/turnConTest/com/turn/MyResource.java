@@ -566,7 +566,7 @@ public class MyResource {
 			try {
 				con = DBUtil.getConnection();
 				
-				if("1".equals(more)) {
+				if("0".equals(more)) {
 					colVa.add("completedid = completedid || '" + SLIP_CHR + seviceId + "'");
 					colVa.add("completedmoney = completedmoney || '" + SLIP_CHR + money + "'" );
 					colVa.add("completedempolyee = completedempolyee || '" + SLIP_CHR2 + seviceId + SLIP_CHR+  employee1.getEmpName() + "'" );
@@ -1083,14 +1083,8 @@ public class MyResource {
 			if (cus == null) {
 				return CommonUtil.makeNGStatus("Not found customer");
 			} else {
-				Employee employee1 = EmployeeDAO.getEmployee(a.getEmployee());
-				ArrayList<String> colVa = new ArrayList<String>();
-				colVa.add("status = '1'");
-				colVa.add("tables = '" + a.getTable() + "'");
-				colVa.add("employee = '" + employee1.getEmpName()+ "'");
-				colVa.add("cometime = '" + getTime() + "'");
-				updateIndate(con, colVa, "phone", a.getPhone());
-				return subChangeWorkFree(httpheaders, a.getEmployee(), a.getPass());
+				
+				return subChangeWorkFree(httpheaders, a.getEmployee(), a.getPass(),a, con );
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -1104,10 +1098,10 @@ public class MyResource {
 	public String changeWorkFree(@Context HttpHeaders httpheaders, @PathParam("id") String id,
 			@PathParam("pass") String pass) {
 		
-		return subChangeWorkFree(httpheaders, id, pass);
+		return subChangeWorkFree(httpheaders, id, pass, null,null);
 	}
 
-	private String subChangeWorkFree(HttpHeaders httpheaders, String id, String pass) {
+	private String subChangeWorkFree(HttpHeaders httpheaders, String id, String pass, CustomerIn2 a,Connection con) {
 		if(loginCheck) {
 			 String aunt = checkAuth(httpheaders); 
 			 if(aunt != null) return aunt;
@@ -1116,6 +1110,15 @@ public class MyResource {
 		if (!pass.equals(employee1.getPass())) {
 			return "{\"error\": \"notCorrPass\"}";
 		}
+		if(a != null) {
+			ArrayList<String> colVa = new ArrayList<String>();
+			colVa.add("status = '1'");
+			colVa.add("tables = '" + a.getTable() + "'");
+			colVa.add("employee = '" + employee1.getEmpName()+ "'");
+			colVa.add("cometime = '" + getTime() + "'");
+			updateIndate(con, colVa, "phone", a.getPhone());
+		}
+		
 		employee1.setIsWorking(!employee1.isIsWorking());
 		LocalDateTime checkIn = Instant.now().atZone(ZoneId.of("US/Central")).toLocalDateTime();
 		employee1.setLstTime(checkIn);
@@ -1950,7 +1953,7 @@ public class MyResource {
 			while (rs.next()) {
 				// sTmp = new ServiceTmp();
 				tmpMoney = rs.getString("money");
-				tmpMoney = tmpMoney.substring(0, tmpMoney.length() - 1);
+				tmpMoney = tmpMoney.substring(0, tmpMoney.length());
 				name = rs.getString("name");
 				tmpName.add(name);
 				tmp.add(name + SLIP_CHR + rs.getString("id") + SLIP_CHR + tmpMoney);
