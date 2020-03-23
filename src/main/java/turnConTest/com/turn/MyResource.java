@@ -1877,6 +1877,8 @@ public class MyResource {
 	public ServiceListTV getIndate2(Connection con, String orderBy) {
 		Statement stmt = null;
 		ResultSet rs = null;
+		ResultSet rs2 = null;
+		Statement stmt2 = null;
 		ServiceListTV svTV  = new ServiceListTV();
 		ArrayList<CustomerOSer> rstIn = new ArrayList<CustomerOSer>();
 		ArrayList<CustomerOWait> rstWaiting = new ArrayList<CustomerOWait>();
@@ -1905,6 +1907,8 @@ public class MyResource {
 							waitTmp.setWarning("NO");
 						}
 					}
+					waitTmp.setService(rs.getString("serviceca").split(SLIP_CHR_RV));
+					//rs2 = stmt2.executeQuery("SELECT * from sercatalogue where status in ('0', '1') order by appointment desc, id asc ");
 					rstWaiting.add(waitTmp);
 				} else if("1".equals(status)) {
 					CustomerOSer serTmp = new CustomerOSer();
@@ -1938,11 +1942,13 @@ public class MyResource {
 		ServiceTmp lstResult = new ServiceTmp();
 		Statement stmt = null;
 		ResultSet rs = null;
+		Statement stmt1 = null;
+		ResultSet rs1 = null;
 		try {
 			stmt = con.createStatement();
 			// System.out.println("SELECT name from service where id in (" +
 			// covertArrToString(new ArrayList<String>(Arrays.asList(ids))) + ")");
-			rs = stmt.executeQuery("SELECT  id, name, money, time from service where id in  ("
+			rs = stmt.executeQuery("SELECT  id, name, money, time, cata_id from service where id in  ("
 					+ covertArrToString(new ArrayList<String>(Arrays.asList(ids)), ",", true) + ")");
 
 			ArrayList<String> tmp = new ArrayList<String>();
@@ -1950,6 +1956,8 @@ public class MyResource {
 			Long money = 0L;
 			String tmpMoney = "";
 			String name = "";
+			String cat_id = "";
+			String cat_name = "";
 			while (rs.next()) {
 				// sTmp = new ServiceTmp();
 				tmpMoney = rs.getString("money");
@@ -1958,10 +1966,20 @@ public class MyResource {
 				tmpName.add(name);
 				tmp.add(name + SLIP_CHR + rs.getString("id") + SLIP_CHR + tmpMoney);
 				money += Long.parseLong(tmpMoney);
+				cat_id += rs.getString("cata_id") + ",";
+			}
+			cat_id = cat_id.substring(0, cat_id.length() - 1);
+			stmt1 = con.createStatement();
+			rs1 = stmt1.executeQuery("SELECT DISTINCT name from sercatalogue where id in  ("
+					+ cat_id + ")");
+			while (rs1.next()) {
+				// sTmp = new ServiceTmp();
+				cat_name += rs.getString("name") + SLIP_CHR;
 			}
 			lstResult.setName(tmpName);
 			lstResult.setMoney(money);
 			lstResult.setSevice(tmp);
+			lstResult.setCa_name(cat_name.substring(0, cat_name.length() - SLIP_CHR.length()));
 		} catch (SQLException e) { // TODO Auto-generated catch
 			e.printStackTrace();
 		} finally {
@@ -2054,12 +2072,12 @@ public class MyResource {
 				return CommonUtil.makeNGStatus("You are in in severice!");
 			}
 			sql = "INSERT INTO indatelogin (phone, name , status , service , appointment, reward, money, countsevice, serviceid, cometime,"
-					+ " servicefull, completedmoney, completedid, completedempolyee ) VALUES ('"
+					+ " servicefull, completedmoney, completedid, completedempolyee,  serviceca) VALUES ('"
 					+ a.getPhone() + "','" + cus.getName() + "','0','"
 					+ covertArrToString(serviceName.getName(), SLIP_CHR, true) + "','" + a.getAppointment() + "','" + 0
 					+ "','" + serviceName.getMoney() + "','" + serviceName.getName().size() + "','"
 					+ covertArrToString(new ArrayList<String>(Arrays.asList(a.getService())), ",", true) + "','"
-					+ getTime() + "'" + ",'" +covertArrToString(serviceName.getSevice(), SLIP_CHR2, true) + "','0','','')";
+					+ getTime() + "'" + ",'" +covertArrToString(serviceName.getSevice(), SLIP_CHR2, true) + "','0','','','" + serviceName.getCa_name() +"')";
 			stmt.executeUpdate(sql);
 			//insertrewardChoose(con, a.getPhone(), covertArrToString(serviceName.getName(), SLIP_CHR, true),cus.getName() );
 			// Insert History
