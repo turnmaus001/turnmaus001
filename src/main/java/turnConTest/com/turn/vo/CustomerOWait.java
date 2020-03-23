@@ -6,6 +6,7 @@ public class CustomerOWait {
 	private String waitTime;
 	private String app;
 	private String warning;
+	private String[] service; 
 	/**
 	 * @return the name
 	 */
@@ -17,6 +18,18 @@ public class CustomerOWait {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+	/**
+	 * @return the service
+	 */
+	public String[] getService() {
+		return service;
+	}
+	/**
+	 * @param service the service to set
+	 */
+	public void setService(String[] service) {
+		this.service = service;
 	}
 	/**
 	 * @return the waitTime

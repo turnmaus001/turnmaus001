@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class ServiceTmp {
 	private ArrayList<String> sevice;
 	private ArrayList<String> name;
+	private String ca_name;
 	/**
 	 * @return the name
 	 */
@@ -55,4 +56,16 @@ public class ServiceTmp {
 	}
 	private Long money;
 	private Long time;
+	/**
+	 * @return the ca_name
+	 */
+	public String getCa_name() {
+		return ca_name;
+	}
+	/**
+	 * @param ca_name the ca_name to set
+	 */
+	public void setCa_name(String ca_name) {
+		this.ca_name = ca_name;
+	}
 }
