@@ -1974,7 +1974,7 @@ public class MyResource {
 					+ cat_id + ")");
 			while (rs1.next()) {
 				// sTmp = new ServiceTmp();
-				cat_name += rs.getString("name") + SLIP_CHR;
+				cat_name += rs1.getString("name") + SLIP_CHR;
 			}
 			lstResult.setName(tmpName);
 			lstResult.setMoney(money);
